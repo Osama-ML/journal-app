@@ -3,9 +3,21 @@ import { types } from "../types/types";
 
 export const startLoginEmailPassword = (email,password) => {
   return (dispatch) => {
-    setTimeout(() => {
-      dispatch(login(123, 'Pedro'))
-    }, 3500);
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(({user}) => {
+        dispatch(login(user.uid, user.displayName))
+      })
+  }
+}
+
+export const startRegisterWithEmailPasswordName = (email, password, name) => {
+  return (dispatch) => { // como esta tarea va a ser asincrona, necesito retorna un callback
+                          //y gracias al thunk tenemos acceso al dispatch de redux
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(async({user}) => {
+        await user.updateProfile({displayName: name})
+        dispatch(login(user.uid, user.displayName))
+      })
   }
 }
 

@@ -4,9 +4,9 @@ import { finishLoading, startLoading } from "./ui";
 
 export const startLoginEmailPassword = (email,password) => {
   return (dispatch) => {
+    dispatch(startLoading())
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(({user}) => {
-        dispatch(startLoading())
         dispatch(login(user.uid, user.displayName))
         dispatch(finishLoading())
       })
@@ -41,4 +41,17 @@ export const login = (uid, displayName) => ({
     uid,
     displayName
   }
-});
+})
+
+export const startLogout = () => {
+  return async (dispatch) => {
+    await firebase.auth().signOut();
+
+    dispatch(logout())
+  }
+}
+
+export const logout = () => ({
+  type: types.logout
+}
+)
